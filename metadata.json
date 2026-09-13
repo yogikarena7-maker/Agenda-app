@@ -1,0 +1,6 @@
+{
+  "name": "Smart Agenda",
+  "description": "Smart agenda with AI natural-language reminder scheduling and Gmail AI draft assistant with human approval",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
