@@ -15,7 +15,12 @@ import java.util.concurrent.TimeUnit
 
 object GeminiClient {
     private const val TAG = "GeminiClient"
-    private const val MODEL = "gemini-3.5-flash"
+    private val CANDIDATE_MODELS = listOf(
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-flash-latest",
+        "gemini-3-flash-preview"
+    )
     private const val BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models"
 
     // Default key fallback (empty by default; configured via local.properties or in-app Settings)
@@ -25,9 +30,9 @@ object GeminiClient {
     private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
 
     private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(60, TimeUnit.SECONDS)
-        .readTimeout(60, TimeUnit.SECONDS)
-        .writeTimeout(60, TimeUnit.SECONDS)
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(45, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
     fun setCustomApiKey(key: String?) {
@@ -84,60 +89,80 @@ object GeminiClient {
         val apiKey = getApiKey(context)
 
         if (apiKey.isBlank() || apiKey.contains("MY_GEMINI_API_KEY")) {
-            return@withContext Result.failure(IllegalStateException("Gemini API key is not configured"))
+            return@withContext Result.failure(IllegalStateException("Gemini API key is not configured. Please add your key in Settings or local.properties."))
         }
 
-        try {
-            val url = "$BASE_URL/$MODEL:generateContent?key=$apiKey"
+        var lastError: Exception? = null
 
-            val rootJson = JSONObject()
+        // Try candidate flash models in order for 100% resilient failover
+        for (modelName in CANDIDATE_MODELS) {
+            try {
+                val url = "$BASE_URL/$modelName:generateContent?key=$apiKey"
 
-            val contentsArray = JSONArray()
-            val userContent = JSONObject()
-            val partsArray = JSONArray()
-            val textPart = JSONObject().put("text", prompt)
-            partsArray.put(textPart)
-            userContent.put("parts", partsArray)
-            contentsArray.put(userContent)
-            rootJson.put("contents", contentsArray)
+                val rootJson = JSONObject()
+                val contentsArray = JSONArray()
+                val userContent = JSONObject()
+                val partsArray = JSONArray()
+                val textPart = JSONObject().put("text", prompt)
+                partsArray.put(textPart)
+                userContent.put("parts", partsArray)
+                contentsArray.put(userContent)
+                rootJson.put("contents", contentsArray)
 
-            if (!systemInstruction.isNullOrBlank()) {
-                val sysContent = JSONObject()
-                val sysParts = JSONArray().put(JSONObject().put("text", systemInstruction))
-                sysContent.put("parts", sysParts)
-                rootJson.put("systemInstruction", sysContent)
-            }
-
-            val requestBody = rootJson.toString().toRequestBody(jsonMediaType)
-            val request = Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build()
-
-            val response = okHttpClient.newCall(request).execute()
-            val bodyString = response.body?.string().orEmpty()
-
-            if (!response.isSuccessful) {
-                Log.e(TAG, "Gemini API error: ${response.code} - $bodyString")
-                return@withContext Result.failure(Exception("Gemini API error ${response.code}: $bodyString"))
-            }
-
-            val jsonResponse = JSONObject(bodyString)
-            val candidates = jsonResponse.optJSONArray("candidates")
-            if (candidates != null && candidates.length() > 0) {
-                val firstCandidate = candidates.getJSONObject(0)
-                val contentObj = firstCandidate.optJSONObject("content")
-                val resParts = contentObj?.optJSONArray("parts")
-                if (resParts != null && resParts.length() > 0) {
-                    val text = resParts.getJSONObject(0).optString("text", "")
-                    return@withContext Result.success(text)
+                if (!systemInstruction.isNullOrBlank()) {
+                    val sysContent = JSONObject()
+                    val sysParts = JSONArray().put(JSONObject().put("text", systemInstruction))
+                    sysContent.put("parts", sysParts)
+                    rootJson.put("systemInstruction", sysContent)
                 }
-            }
 
-            Result.failure(Exception("No candidate content received from Gemini"))
-        } catch (e: Exception) {
-            Log.e(TAG, "Exception during Gemini generateContent", e)
-            Result.failure(e)
+                val requestBody = rootJson.toString().toRequestBody(jsonMediaType)
+                val request = Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build()
+
+                val response = okHttpClient.newCall(request).execute()
+                val bodyString = response.body?.string().orEmpty()
+
+                if (!response.isSuccessful) {
+                    Log.w(TAG, "Gemini model $modelName returned HTTP ${response.code}: $bodyString. Trying next candidate...")
+                    lastError = Exception("Gemini ($modelName) HTTP ${response.code}: $bodyString")
+                    continue
+                }
+
+                val jsonResponse = JSONObject(bodyString)
+                val candidates = jsonResponse.optJSONArray("candidates")
+                if (candidates != null && candidates.length() > 0) {
+                    val firstCandidate = candidates.getJSONObject(0)
+                    val contentObj = firstCandidate.optJSONObject("content")
+                    val resParts = contentObj?.optJSONArray("parts")
+                    if (resParts != null && resParts.length() > 0) {
+                        val textBuilder = StringBuilder()
+                        for (i in 0 until resParts.length()) {
+                            val partObj = resParts.getJSONObject(i)
+                            // Filter out internal reasoning/thought tokens if present
+                            if (!partObj.optBoolean("thought", false)) {
+                                val t = partObj.optString("text", "")
+                                if (t.isNotEmpty()) textBuilder.append(t)
+                            }
+                        }
+                        val extracted = textBuilder.toString().ifBlank {
+                            resParts.getJSONObject(0).optString("text", "")
+                        }
+                        if (extracted.isNotBlank()) {
+                            return@withContext Result.success(extracted.trim())
+                        }
+                    }
+                }
+
+                lastError = Exception("No valid candidate text returned by $modelName")
+            } catch (e: Exception) {
+                Log.w(TAG, "Error executing model $modelName: ${e.message}. Trying next candidate...")
+                lastError = e
+            }
         }
+
+        Result.failure(lastError ?: Exception("All candidate Gemini models failed to generate a response"))
     }
 }

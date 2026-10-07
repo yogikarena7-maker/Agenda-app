@@ -41,6 +41,7 @@ object GoogleAuthManager {
 
     val GMAIL_SCOPES = listOf(
         "https://www.googleapis.com/auth/gmail.readonly",
+        "https://www.googleapis.com/auth/gmail.compose",
         "https://www.googleapis.com/auth/gmail.send"
     )
 
@@ -49,6 +50,82 @@ object GoogleAuthManager {
 
     private val _isSyncing = MutableStateFlow(false)
     val isSyncing: StateFlow<Boolean> = _isSyncing.asStateFlow()
+
+    fun init(context: Context) {
+        try {
+            val prefs = context.getSharedPreferences("smart_agenda_auth_prefs", Context.MODE_PRIVATE)
+            val email = prefs.getString("email", null)
+            if (!email.isNullOrBlank()) {
+                val displayName = prefs.getString("displayName", email) ?: email
+                val accessToken = prefs.getString("accessToken", null)
+                val idToken = prefs.getString("idToken", "") ?: ""
+                val isGmailConnected = prefs.getBoolean("isGmailConnected", false)
+                val profilePictureUrl = prefs.getString("profilePictureUrl", null)
+                val lastSyncedTimestamp = prefs.getLong("lastSyncedTimestamp", System.currentTimeMillis())
+
+                val info = GoogleAccountInfo(
+                    email = email,
+                    displayName = displayName,
+                    isGmailConnected = isGmailConnected,
+                    idToken = idToken,
+                    accessToken = accessToken,
+                    profilePictureUrl = profilePictureUrl,
+                    lastSyncedTimestamp = lastSyncedTimestamp
+                )
+                _authState.value = AuthState.Connected(info)
+                Log.d(TAG, "Restored Google Account session for: $email (hasToken=${!accessToken.isNullOrBlank()})")
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to restore auth state", e)
+        }
+    }
+
+    private fun saveAuthState(context: Context, info: GoogleAccountInfo) {
+        try {
+            context.getSharedPreferences("smart_agenda_auth_prefs", Context.MODE_PRIVATE)
+                .edit()
+                .putString("email", info.email)
+                .putString("displayName", info.displayName)
+                .putString("accessToken", info.accessToken)
+                .putString("idToken", info.idToken)
+                .putBoolean("isGmailConnected", info.isGmailConnected)
+                .putString("profilePictureUrl", info.profilePictureUrl)
+                .putLong("lastSyncedTimestamp", info.lastSyncedTimestamp)
+                .apply()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to save auth state", e)
+        }
+    }
+
+    private fun clearAuthState(context: Context) {
+        try {
+            context.getSharedPreferences("smart_agenda_auth_prefs", Context.MODE_PRIVATE)
+                .edit()
+                .clear()
+                .apply()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to clear auth state", e)
+        }
+    }
+
+    fun setManualAccessToken(context: Context, token: String, customEmail: String? = null) {
+        val cleanToken = token.trim()
+        val current = _authState.value
+        val email = customEmail?.trim()?.takeIf { it.isNotBlank() }
+            ?: (if (current is AuthState.Connected) current.accountInfo.email else "user@gmail.com")
+
+        val info = GoogleAccountInfo(
+            email = email,
+            displayName = email.substringBefore("@").replaceFirstChar { it.uppercase() },
+            isGmailConnected = cleanToken.isNotBlank(),
+            idToken = "custom_token",
+            accessToken = cleanToken.ifBlank { null },
+            lastSyncedTimestamp = System.currentTimeMillis()
+        )
+        _authState.value = AuthState.Connected(info)
+        saveAuthState(context, info)
+        Log.d(TAG, "Saved access token for $email")
+    }
 
     /**
      * Called when a real Google Account is selected via Google Sign-In or CredentialManager.
@@ -75,8 +152,6 @@ object GoogleAuthManager {
             lastSyncedTimestamp = System.currentTimeMillis()
         )
 
-        _authState.value = AuthState.Connected(initialInfo)
-
         // Request real OAuth 2.0 access token for Gmail API
         val targetAccount = account ?: android.accounts.Account(normalizedEmail, "com.google")
         try {
@@ -84,25 +159,31 @@ object GoogleAuthManager {
             val token = withContext(Dispatchers.IO) {
                 com.google.android.gms.auth.GoogleAuthUtil.getToken(context, targetAccount, scopeStr)
             }
-            if (token.isNotBlank()) {
-                _authState.value = AuthState.Connected(
-                    initialInfo.copy(
-                        accessToken = token,
-                        isGmailConnected = true,
-                        lastSyncedTimestamp = System.currentTimeMillis()
-                    )
-                )
-                Log.d(TAG, "Real OAuth token acquired for Gmail API ($normalizedEmail)")
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "OAuth token fetch warning (${e.message}). Keeping account connected.", e)
-            _authState.value = AuthState.Connected(
-                initialInfo.copy(
+            if (!token.isNullOrBlank()) {
+                val updated = initialInfo.copy(
+                    accessToken = token,
                     isGmailConnected = true,
-                    accessToken = initialInfo.accessToken ?: "real_oauth_token",
                     lastSyncedTimestamp = System.currentTimeMillis()
                 )
-            )
+                _authState.value = AuthState.Connected(updated)
+                saveAuthState(context, updated)
+                Log.d(TAG, "Real OAuth token acquired for Gmail API ($normalizedEmail)")
+            } else {
+                _authState.value = AuthState.Connected(initialInfo)
+                saveAuthState(context, initialInfo)
+            }
+        } catch (e: com.google.android.gms.auth.UserRecoverableAuthException) {
+            Log.w(TAG, "User interactive consent required for Gmail scopes", e)
+            if (e.intent != null) {
+                _authState.value = AuthState.NeedsConsent(initialInfo, e.intent!!)
+            } else {
+                _authState.value = AuthState.Connected(initialInfo)
+                saveAuthState(context, initialInfo)
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "OAuth token fetch notice (${e.message}). Account connected for profile.", e)
+            _authState.value = AuthState.Connected(initialInfo)
+            saveAuthState(context, initialInfo)
         }
     }
 
@@ -118,7 +199,7 @@ object GoogleAuthManager {
                 context = context,
                 email = normalized,
                 displayName = normalized.substringBefore("@").replaceFirstChar { it.uppercase() },
-                idToken = "real_id_token",
+                idToken = "manual_id_token",
                 account = android.accounts.Account(normalized, "com.google")
             )
             return
@@ -158,29 +239,14 @@ object GoogleAuthManager {
                     photoUrl = photoUrl
                 )
             } else {
-                connectFallbackAccount()
+                _authState.value = AuthState.Error("Unsupported credential type")
             }
         } catch (e: GetCredentialCancellationException) {
             _authState.value = AuthState.Disconnected
         } catch (e: Exception) {
-            Log.w(TAG, "CredentialManager sign-in notice (${e.localizedMessage}). Applying fallback account.", e)
-            connectFallbackAccount()
+            Log.w(TAG, "CredentialManager sign-in notice (${e.localizedMessage})", e)
+            _authState.value = AuthState.Error(e.localizedMessage ?: "Sign-in cancelled or unavailable")
         }
-    }
-
-    private fun connectFallbackAccount() {
-        val fallbackEmail = "user@gmail.com"
-        _authState.value = AuthState.Connected(
-            GoogleAccountInfo(
-                email = fallbackEmail,
-                displayName = "Smart Agenda User",
-                isGmailConnected = true,
-                idToken = "fallback_id_token",
-                accessToken = "fallback_access_token",
-                profilePictureUrl = null,
-                lastSyncedTimestamp = System.currentTimeMillis()
-            )
-        )
     }
 
     /**
@@ -201,13 +267,13 @@ object GoogleAuthManager {
             }
 
             if (accessToken.isNotBlank()) {
-                _authState.value = AuthState.Connected(
-                    accountInfo.copy(
-                        accessToken = accessToken,
-                        isGmailConnected = true,
-                        lastSyncedTimestamp = System.currentTimeMillis()
-                    )
+                val updated = accountInfo.copy(
+                    accessToken = accessToken,
+                    isGmailConnected = true,
+                    lastSyncedTimestamp = System.currentTimeMillis()
                 )
+                _authState.value = AuthState.Connected(updated)
+                saveAuthState(context, updated)
                 Log.d(TAG, "Gmail OAuth access token acquired successfully")
             }
         } catch (e: com.google.android.gms.auth.UserRecoverableAuthException) {
@@ -218,14 +284,7 @@ object GoogleAuthManager {
                 _authState.value = AuthState.Connected(accountInfo.copy(isGmailConnected = true))
             }
         } catch (e: Exception) {
-            Log.w(TAG, "Error requesting Gmail access token: ${e.message}. Keeping account connected.", e)
-            _authState.value = AuthState.Connected(
-                accountInfo.copy(
-                    isGmailConnected = true,
-                    accessToken = accountInfo.accessToken ?: "connected_token",
-                    lastSyncedTimestamp = System.currentTimeMillis()
-                )
-            )
+            Log.w(TAG, "Error requesting Gmail access token: ${e.message}", e)
         }
     }
 
@@ -249,6 +308,7 @@ object GoogleAuthManager {
             GoogleSignIn.getClient(context, gso).signOut()
         } catch (_: Exception) { }
 
+        clearAuthState(context)
         _authState.value = AuthState.Disconnected
         _isSyncing.value = false
         onComplete()

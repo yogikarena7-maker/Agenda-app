@@ -54,6 +54,7 @@ fun HumanApprovalDraftDialog(
     draft: EmailDraftEntity,
     onDismiss: () -> Unit,
     onApproveAndSend: (EmailDraftEntity) -> Unit,
+    onSaveToGmailDraft: (EmailDraftEntity) -> Unit = {},
     onDiscard: () -> Unit,
     onRegenerateWithTone: (String) -> Unit
 ) {
@@ -61,6 +62,7 @@ fun HumanApprovalDraftDialog(
     var selectedTone by remember { mutableStateOf(draft.tone) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var isSending by remember { mutableStateOf(false) }
+    var isSavingDraft by remember { mutableStateOf(false) }
 
     val obsidianBg = Color(0xFF13151A)
     val cardBorder = Color(0xFF262B36)
@@ -223,42 +225,79 @@ fun HumanApprovalDraftDialog(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Action Buttons (Discard / Approve & Send)
-                Row(
+                // Action Buttons (Discard / Save Draft / Approve & Send)
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Button(
-                        onClick = onDiscard,
-                        enabled = !isSending,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(46.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF261D22)
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Discard",
-                            tint = accentRed,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Discard", color = accentRed, fontSize = 13.sp)
+                        Button(
+                            onClick = onDiscard,
+                            enabled = !isSending && !isSavingDraft,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(46.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF261D22)
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Discard",
+                                tint = accentRed,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(text = "Discard", color = accentRed, fontSize = 13.sp)
+                        }
+
+                        Button(
+                            onClick = {
+                                if (!isSending && !isSavingDraft) {
+                                    isSavingDraft = true
+                                    onSaveToGmailDraft(draft.copy(draftBody = editableBody, tone = selectedTone))
+                                }
+                            },
+                            enabled = !isSending && !isSavingDraft,
+                            modifier = Modifier
+                                .weight(1.2f)
+                                .height(46.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF1E2838)
+                            )
+                        ) {
+                            if (isSavingDraft) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = accentCyan,
+                                    strokeWidth = 2.dp
+                                )
+                            } else {
+                                Text(
+                                    text = "Save as Draft",
+                                    color = accentCyan,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
                     }
 
                     Button(
                         onClick = {
-                            if (!isSending) {
+                            if (!isSending && !isSavingDraft) {
                                 isSending = true
                                 onApproveAndSend(draft.copy(draftBody = editableBody, tone = selectedTone))
                             }
                         },
-                        enabled = !isSending,
+                        enabled = !isSending && !isSavingDraft,
                         modifier = Modifier
-                            .weight(1.5f)
+                            .fillMaxWidth()
                             .height(46.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -273,7 +312,7 @@ fun HumanApprovalDraftDialog(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Sending...",
+                                text = "Sending to Gmail...",
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp

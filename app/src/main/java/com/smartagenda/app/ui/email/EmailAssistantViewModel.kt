@@ -152,6 +152,26 @@ class EmailAssistantViewModel(
         }
     }
 
+    fun saveDraftToGmail(draft: EmailDraftEntity, onResult: (Boolean, String) -> Unit = { _, _ -> }) {
+        viewModelScope.launch {
+            val authState = GoogleAuthManager.authState.value
+            val token = if (authState is AuthState.Connected) authState.accountInfo.accessToken?.takeIf { it.isNotBlank() } else null
+            if (token.isNullOrBlank()) {
+                onResult(false, "Google account is not connected. Please connect in Settings.")
+                return@launch
+            }
+            val result = emailRepository.saveDraftToGmail(draft, token)
+            if (result.isSuccess) {
+                emailRepository.updateDraft(draft)
+                _currentDraft.value = null
+                onResult(true, "Draft saved to your Gmail drafts!")
+            } else {
+                val err = result.exceptionOrNull()?.message ?: "Failed to save draft to Gmail"
+                onResult(false, err)
+            }
+        }
+    }
+
     fun discardDraft() {
         val draft = _currentDraft.value ?: return
         viewModelScope.launch {

@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "859163604812-localdebug.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartagenda.app",
+            "certificate_hash": "2f716716be4392198d0a1cc7f5c0e72d96aef24b"
+          }
+        },
+        {
           "client_id": "859163604812-bak9ks93bf3v4kkpvg36sn8ok7bs0k7s.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -66,6 +66,9 @@ class MainActivity : ComponentActivity() {
         // Initialize Notification Channel
         NotificationScheduler.createNotificationChannel(applicationContext)
 
+        // Initialize persistent Google Auth & Gemini state
+        com.smartagenda.app.auth.GoogleAuthManager.init(applicationContext)
+
         checkPermissions()
 
         setContent {

@@ -253,6 +253,7 @@ fun EmailAssistantScreen(
             draft = draft,
             onDismiss = { viewModel.dismissDraftDialog() },
             onApproveAndSend = { approvedDraft -> viewModel.approveAndSendDraft(approvedDraft) },
+            onSaveToGmailDraft = { draftToSave -> viewModel.saveDraftToGmail(draftToSave) },
             onDiscard = { viewModel.discardDraft() },
             onRegenerateWithTone = { newTone -> viewModel.regenerateDraftWithTone(newTone) }
         )

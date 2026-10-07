@@ -70,6 +70,20 @@ class EmailRepository(private val emailDao: EmailDao) {
         emailDao.updateDraft(draft)
     }
 
+    suspend fun saveDraftToGmail(
+        draft: EmailDraftEntity,
+        accessToken: String
+    ): Result<String> = withContext(Dispatchers.IO) {
+        try {
+            val originalEmail = emailDao.getEmailById(draft.emailId).firstOrNull()
+            val threadId = originalEmail?.threadId
+            GmailApiClient.createDraftInGmail(accessToken, draft, threadId)
+        } catch (e: Exception) {
+            Log.e("EmailRepository", "Error saving draft to Gmail", e)
+            Result.failure(e)
+        }
+    }
+
     suspend fun approveAndSendDraft(
         draft: EmailDraftEntity,
         accessToken: String? = null

@@ -244,6 +244,59 @@ object GmailApiClient {
         }
     }
 
+    suspend fun createDraftInGmail(
+        accessToken: String,
+        draft: EmailDraftEntity,
+        originalThreadId: String? = null
+    ): Result<String> = withContext(Dispatchers.IO) {
+        try {
+            if (accessToken.isBlank()) {
+                return@withContext Result.failure(IllegalStateException("No OAuth access token for creating draft"))
+            }
+
+            val rawMime = buildRawMimeEmail(
+                toEmail = draft.recipientEmail,
+                toName = draft.recipientName,
+                subject = draft.subject,
+                bodyText = draft.draftBody
+            )
+
+            val base64UrlMime = Base64.encodeToString(rawMime.toByteArray(Charsets.UTF_8), Base64.URL_SAFE or Base64.NO_WRAP)
+
+            val messageObj = JSONObject()
+            messageObj.put("raw", base64UrlMime)
+            if (!originalThreadId.isNullOrBlank()) {
+                messageObj.put("threadId", originalThreadId)
+            }
+
+            val requestJson = JSONObject()
+            requestJson.put("message", messageObj)
+
+            val draftUrl = "$BASE_URL/drafts"
+            val request = Request.Builder()
+                .url(draftUrl)
+                .addHeader("Authorization", "Bearer $accessToken")
+                .post(requestJson.toString().toRequestBody(jsonMediaType))
+                .build()
+
+            val response = client.newCall(request).execute()
+            val respBody = response.body?.string().orEmpty()
+
+            if (!response.isSuccessful) {
+                Log.e(TAG, "Gmail create draft error ${response.code}: $respBody")
+                return@withContext Result.failure(Exception("Gmail draft creation failed HTTP ${response.code}"))
+            }
+
+            val respJson = JSONObject(respBody)
+            val draftId = respJson.optString("id", "")
+            Log.d(TAG, "Draft successfully created in Gmail: $draftId")
+            Result.success(draftId)
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception in createDraftInGmail", e)
+            Result.failure(e)
+        }
+    }
+
     private fun buildRawMimeEmail(
         toEmail: String,
         toName: String,

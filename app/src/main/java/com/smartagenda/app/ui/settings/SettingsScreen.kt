@@ -92,6 +92,7 @@ fun SettingsScreen(
     var showCustomEmailDialog by remember { mutableStateOf(false) }
     var enteredApiKey by remember { mutableStateOf("") }
     var enteredGmailAddress by remember { mutableStateOf("") }
+    var enteredOAuthToken by remember { mutableStateOf("") }
     var testStatusMessage by remember { mutableStateOf<String?>(null) }
     var isTestingConnection by remember { mutableStateOf(false) }
 
@@ -101,7 +102,8 @@ fun SettingsScreen(
             .requestEmail()
             .requestScopes(
                 Scope(GoogleAuthManager.GMAIL_SCOPES[0]),
-                Scope(GoogleAuthManager.GMAIL_SCOPES[1])
+                Scope(GoogleAuthManager.GMAIL_SCOPES[1]),
+                Scope(GoogleAuthManager.GMAIL_SCOPES[2])
             )
             .build()
     }
@@ -698,7 +700,23 @@ fun SettingsScreen(
                     OutlinedTextField(
                         value = enteredGmailAddress,
                         onValueChange = { enteredGmailAddress = it },
-                        placeholder = { Text("e.g. john.doe@gmail.com", color = Color.Gray) },
+                        label = { Text("Gmail Address", color = Color.Gray, fontSize = 12.sp) },
+                        placeholder = { Text("e.g. yourname@gmail.com", color = Color.Gray) },
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedBorderColor = accentCyan,
+                            unfocusedBorderColor = cardBorder
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    OutlinedTextField(
+                        value = enteredOAuthToken,
+                        onValueChange = { enteredOAuthToken = it },
+                        label = { Text("OAuth 2.0 Access Token (Optional)", color = Color.Gray, fontSize = 12.sp) },
+                        placeholder = { Text("Paste 'ya29...' token for instant sync", color = Color.Gray) },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.White,
@@ -715,7 +733,11 @@ fun SettingsScreen(
                     onClick = {
                         if (enteredGmailAddress.isNotBlank()) {
                             coroutineScope.launch {
-                                GoogleAuthManager.signIn(context, customEmail = enteredGmailAddress.trim())
+                                if (enteredOAuthToken.isNotBlank()) {
+                                    GoogleAuthManager.setManualAccessToken(context, enteredOAuthToken.trim(), enteredGmailAddress.trim())
+                                } else {
+                                    GoogleAuthManager.signIn(context, customEmail = enteredGmailAddress.trim())
+                                }
                             }
                         }
                         showCustomEmailDialog = false
