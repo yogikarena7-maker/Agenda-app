@@ -1,21 +1,4 @@
 <resources>
-    <string name="app_name">Smart Agenda</string>
-    <string name="agenda_title">Today\'s Agenda</string>
-    <string name="create_reminder">New Reminder</string>
-    <string name="edit_reminder">Edit Reminder</string>
-    <string name="title_label">Title</string>
-    <string name="notes_label">Notes</string>
-    <string name="date_label">Date</string>
-    <string name="time_label">Time</string>
-    <string name="save_action">Save Reminder</string>
-    <string name="update_action">Update Reminder</string>
-    <string name="delete_action">Delete</string>
-    <string name="cancel_action">Cancel</string>
-    <string name="empty_agenda_title">No agenda items yet</string>
-    <string name="empty_agenda_subtitle">Tap the + button below to plan your day or set a time-sensitive reminder.</string>
-    <string name="notification_channel_name">Agenda Reminders</string>
-    <string name="notification_channel_desc">Notifications for scheduled agenda reminders</string>
-    <string name="email_assistant_title">Email Assistant</string>
-    <string name="ai_draft_warning">Human Approval Required Before Sending</string>
-    <string name="ai_natural_language_title">AI Natural-Language Reminder</string>
+    <string name="app_name">Zenda</string>
+    <string name="app_tagline">Plan • Focus • Achieve</string>
 </resources>

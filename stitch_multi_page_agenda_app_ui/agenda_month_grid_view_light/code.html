@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Calendar Month View - iOS</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            appLight: '#F8F9FA',
+            cardLight: '#FFFFFF',
+            cardBorder: '#E2E8F0',
+            obsidian: '#0F172A',
+            slateMuted: '#94A3B8',
+            limeAccent: '#BEF264',
+            limeAccentDark: '#476800',
+            cyanAccent: '#06b6d4',
+            magentaAccent: '#ec4899',
+            orangeAccent: '#f97316'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Roboto', 'sans-serif'],
+          },
+          boxShadow: {
+            'subtle-card': '0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02)',
+            'float-pill': '0 10px 30px -5px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.05)'
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scrollbars-and-reset">
+    /* Hide scrollbar for slick native app look */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[#e9ecf0] flex justify-center items-center min-h-screen p-0 sm:p-4 text-obsidian antialiased font-sans select-none">
+<!-- BEGIN: PhoneFrameContainer -->
+<!-- iPhone 14/15 Pro style mock container -->
+<div class="relative w-full max-w-[393px] h-[852px] bg-appLight rounded-[48px] overflow-hidden border-[6px] border-[#d8dee8] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)] flex flex-col justify-between" data-purpose="mobile-viewport">
+<!-- BEGIN: StatusBar -->
+<header class="w-full pt-3 px-7 flex justify-between items-center z-30 shrink-0" data-purpose="ios-status-bar">
+<span class="text-sm font-bold tracking-tight text-obsidian">15:00</span>
+<!-- Dynamic Island Placeholder -->
+<div class="w-24 h-4 bg-obsidian rounded-full mx-auto -mt-1 hidden sm:block"></div>
+<div class="flex items-center space-x-1.5 text-obsidian text-xs">
+<!-- Cellular Signal Icon -->
+<svg class="w-4 h-3.5 fill-current" viewbox="0 0 24 24">
+<rect height="6" rx="1" width="3.5" x="2" y="16"></rect>
+<rect height="10" rx="1" width="3.5" x="7.5" y="12"></rect>
+<rect height="15" rx="1" width="3.5" x="13" y="7"></rect>
+<rect height="19" rx="1" width="3.5" x="18.5" y="3"></rect>
+</svg>
+<!-- Wifi Icon -->
+<svg class="w-4 h-3.5 fill-current" viewbox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98A17.9 17.9 0 0012 4zm0 3.5c3.78 0 7.21 1.5 9.77 3.96L12 18.25 2.23 11.46C4.79 8.99 8.22 7.5 12 7.5z"></path>
+</svg>
+<!-- Battery Icon -->
+<div class="flex items-center">
+<div class="w-5 h-2.5 border border-obsidian rounded-sm p-[1px] flex items-center">
+<div class="w-full h-full bg-obsidian rounded-2xs"></div>
+</div>
+<div class="w-[1px] h-1 bg-obsidian rounded-r-xs -ml-[1px]"></div>
+</div>
+</div>
+</header>
+<!-- END: StatusBar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 flex flex-col px-4 pt-2 overflow-y-auto">
+<!-- Top Title and Action Buttons -->
+<div class="flex justify-between items-center py-2" data-purpose="view-header">
+<h1 class="text-2xl font-extrabold tracking-tight text-obsidian">October</h1>
+<div class="flex items-center space-x-2">
+<!-- Search Icon Button -->
+<button aria-label="Search" class="p-2 rounded-full text-slate-600 hover:text-obsidian hover:bg-black/5 active:bg-black/10 transition" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<circle cx="11" cy="11" r="7"></circle>
+<line stroke-linecap="round" x1="16.5" x2="21" y1="16.5" y2="21"></line>
+</svg>
+</button>
+<!-- Calendar/List Icon Button -->
+<button aria-label="Calendar view options" class="p-2 rounded-full text-slate-600 hover:text-obsidian hover:bg-black/5 active:bg-black/10 transition" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="17" rx="3" stroke-linecap="round" width="18" x="3" y="4"></rect>
+<line x1="3" x2="21" y1="9" y2="9"></line>
+<line stroke-linecap="round" x1="8" x2="8" y1="2" y2="5"></line>
+<line stroke-linecap="round" x1="16" x2="16" y1="2" y2="5"></line>
+</svg>
+</button>
+<!-- Profile Avatar with Lime Outline -->
+<div class="w-8 h-8 rounded-full ring-2 ring-limeAccent ring-offset-2 ring-offset-appLight p-0.5 overflow-hidden bg-slate-200 flex items-center justify-center cursor-pointer shadow-sm">
+<svg class="w-6 h-6 text-slate-600" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- BEGIN: TopWeekCarouselStrip -->
+<!-- Mini weekly numbers strip with lime highlighted active pill -->
+<section class="w-full bg-white/90 backdrop-blur-sm rounded-2xl p-1.5 mt-1 mb-2 border border-cardBorder shadow-subtle-card" data-purpose="week-strip-filter">
+<div class="grid grid-cols-7 gap-1 text-center font-medium">
+<!-- Active Highlight Day 1 -->
+<button class="bg-limeAccent text-obsidian rounded-xl py-1.5 font-bold text-sm shadow-sm ring-1 ring-black/5 transition hover:brightness-95">1</button>
+<button class="text-slate-500 hover:text-obsidian hover:bg-slate-50 rounded-xl py-1.5 text-sm font-semibold transition">2</button>
+<button class="text-slate-500 hover:text-obsidian hover:bg-slate-50 rounded-xl py-1.5 text-sm font-semibold transition">3</button>
+<button class="text-slate-500 hover:text-obsidian hover:bg-slate-50 rounded-xl py-1.5 text-sm font-semibold transition">4</button>
+<button class="text-slate-500 hover:text-obsidian hover:bg-slate-50 rounded-xl py-1.5 text-sm font-semibold transition">5</button>
+<button class="text-slate-500 hover:text-obsidian hover:bg-slate-50 rounded-xl py-1.5 text-sm font-semibold transition">6</button>
+<button class="text-slate-500 hover:text-obsidian hover:bg-slate-50 rounded-xl py-1.5 text-sm font-semibold transition">7</button>
+</div>
+</section>
+<!-- END: TopWeekCarouselStrip -->
+<!-- BEGIN: MonthCalendarGrid -->
+<!-- Main full 7-column monthly tile schedule view -->
+<div class="flex-1 grid grid-cols-7 gap-1.5 py-1" data-purpose="month-grid">
+<!-- Row 1: Preview Days & Early Oct -->
+<!-- Day 28 (Previous Month) -->
+<div class="bg-[#f5f7fa] rounded-xl p-1 flex flex-col justify-between border border-cardBorder/60 min-h-[92px]">
+<span class="text-xs font-semibold text-slateMuted pl-0.5">28</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-600 flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] shrink-0 shadow-xs"></span>Demo</span>
+<span class="text-[9px] font-medium leading-none text-slate-600 flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-magentaAccent shrink-0 shadow-xs"></span>Daily</span>
+</div>
+</div>
+<!-- Day 29 -->
+<div class="bg-[#f5f7fa] rounded-xl p-1 flex flex-col justify-between border border-cardBorder/60 min-h-[92px]">
+<span class="text-xs font-semibold text-slateMuted pl-0.5">29</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-600 flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0 shadow-xs"></span>WS..</span>
+</div>
+</div>
+<!-- Day 30 -->
+<div class="bg-[#f5f7fa] rounded-xl p-1 flex flex-col justify-between border border-cardBorder/60 min-h-[92px]">
+<span class="text-xs font-semibold text-slateMuted pl-0.5">30</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-600 flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0 shadow-xs"></span>Sync</span>
+</div>
+</div>
+<!-- Day 31 -->
+<div class="bg-[#f5f7fa] rounded-xl p-1 flex flex-col justify-between border border-cardBorder/60 min-h-[92px]">
+<span class="text-xs font-semibold text-slateMuted pl-0.5">31</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-600 flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-magentaAccent shrink-0 shadow-xs"></span>RDW..</span>
+</div>
+</div>
+<!-- Day 13 / Preview Header Cell -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-semibold text-slate-400 pl-0.5">13</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 1 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">1</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 2 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">2</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Row 2: Days 3 - 9 -->
+<!-- Day 3 (Active Day highlighted with Lime green accent border/ring) -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border-2 border-limeAccentDark/60 shadow-sm min-h-[92px] ring-2 ring-limeAccent/50">
+<span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-limeAccent text-xs font-extrabold text-limeAccentDark shadow-xs -ml-0.5 -mt-0.5">3</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] shrink-0"></span>Fligh..</span>
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-orangeAccent shrink-0"></span>Brain..</span>
+</div>
+</div>
+<!-- Day 4 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">4</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 5 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">5</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 6 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">6</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0"></span>Sync</span>
+</div>
+</div>
+<!-- Day 7 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">7</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-magentaAccent shrink-0"></span>Demo</span>
+</div>
+</div>
+<!-- Day 8 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">8</span>
+<div></div>
+</div>
+<!-- Day 9 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">9</span>
+<div></div>
+</div>
+<!-- Row 3: Days 10 - 16 -->
+<!-- Day 10 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">10</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-magentaAccent shrink-0"></span>Daily</span>
+</div>
+</div>
+<!-- Day 11 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">11</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 12 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">12</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 13 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">13</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 14 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">14</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] shrink-0"></span>Flight</span>
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0"></span>Sync</span>
+</div>
+</div>
+<!-- Day 15 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">15</span>
+<div></div>
+</div>
+<!-- Day 16 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">16</span>
+<div></div>
+</div>
+<!-- Row 4: Days 17 - 23 -->
+<!-- Day 17 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">17</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-magentaAccent shrink-0"></span>Daily</span>
+</div>
+</div>
+<!-- Day 18 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">18</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 19 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">19</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 20 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">20</span>
+<div class="flex flex-col gap-0.5 overflow-hidden">
+<span class="text-[8px] font-semibold leading-tight text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] shrink-0"></span>Demo</span>
+<span class="text-[8px] font-semibold leading-tight text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-magentaAccent shrink-0"></span>BF/..</span>
+<span class="text-[8px] font-semibold leading-tight text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0"></span>F2F</span>
+</div>
+</div>
+<!-- Day 21 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">21</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0"></span>Meet..</span>
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0"></span>Meet..</span>
+</div>
+</div>
+<!-- Day 22 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">22</span>
+<div></div>
+</div>
+<!-- Day 23 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">23</span>
+<div></div>
+</div>
+<!-- Row 5: Days 24 - 30 -->
+<!-- Day 24 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">24</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-magentaAccent shrink-0"></span>Daily</span>
+</div>
+</div>
+<!-- Day 25 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">25</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-cyanAccent shrink-0"></span>Meet..</span>
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] shrink-0"></span>F2F</span>
+</div>
+</div>
+<!-- Day 26 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">26</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 27 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">27</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-medium leading-none text-slate-400 flex items-center gap-1 truncate"><span class="w-1 h-1 rounded-full bg-slate-300 shrink-0"></span>No..</span>
+</div>
+</div>
+<!-- Day 28 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">28</span>
+<div class="flex flex-col gap-1 overflow-hidden">
+<span class="text-[9px] font-semibold leading-none text-obsidian flex items-center gap-1 truncate"><span class="w-1.5 h-1.5 rounded-full bg-[#84cc16] shrink-0"></span>Demo</span>
+</div>
+</div>
+<!-- Day 29 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">29</span>
+<div></div>
+</div>
+<!-- Day 30 -->
+<div class="bg-cardLight rounded-xl p-1 flex flex-col justify-between border border-cardBorder shadow-subtle-card min-h-[92px]">
+<span class="text-xs font-bold text-obsidian pl-0.5">30</span>
+<div></div>
+</div>
+</div>
+<!-- END: MonthCalendarGrid -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: FloatingBottomNavigationBar -->
+<footer class="relative pb-6 pt-2 flex flex-col items-center justify-center shrink-0" data-purpose="floating-navigation-bar">
+<!-- Floating Capsule Pill Container -->
+<div class="bg-white/85 backdrop-blur-xl px-5 py-2 rounded-full flex items-center space-x-6 border border-slate-200/90 shadow-float-pill ring-1 ring-black/5">
+<!-- Daily / List View Switch -->
+<button aria-label="Agenda View" class="text-slate-500 hover:text-obsidian active:scale-95 transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<line stroke-linecap="round" x1="4" x2="20" y1="8" y2="8"></line>
+<line stroke-linecap="round" x1="4" x2="20" y1="16" y2="16"></line>
+</svg>
+</button>
+<!-- 9-Dot Month Grid Icon (Active Tab Highlighted) -->
+<button aria-label="Month Grid View" class="text-limeAccentDark bg-limeAccent/80 p-1.5 rounded-full shadow-xs active:scale-95 transition" type="button">
+<svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
+<circle cx="5" cy="5" r="2.2"></circle>
+<circle cx="12" cy="5" r="2.2"></circle>
+<circle cx="19" cy="5" r="2.2"></circle>
+<circle cx="5" cy="12" r="2.2"></circle>
+<circle cx="12" cy="12" r="2.2"></circle>
+<circle cx="19" cy="12" r="2.2"></circle>
+<circle cx="5" cy="19" r="2.2"></circle>
+<circle cx="12" cy="19" r="2.2"></circle>
+<circle cx="19" cy="19" r="2.2"></circle>
+</svg>
+</button>
+<!-- Event / New Schedule Icon -->
+<button aria-label="Calendar Feed" class="text-slate-500 hover:text-obsidian active:scale-95 transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="17" rx="3" width="18" x="3" y="4"></rect>
+<line x1="3" x2="21" y1="9" y2="9"></line>
+<line stroke-linecap="round" x1="8" x2="8" y1="2" y2="5"></line>
+<line stroke-linecap="round" x1="16" x2="16" y1="2" y2="5"></line>
+<path d="M12 13v4M10 15h4" stroke-linecap="round"></path>
+</svg>
+</button>
+</div>
+<!-- iOS Bottom Home Indicator Bar -->
+<div class="w-32 h-1 bg-slate-900/30 rounded-full mt-3"></div>
+</footer>
+<!-- END: FloatingBottomNavigationBar -->
+</div>
+<!-- END: PhoneFrameContainer -->
+</body></html>

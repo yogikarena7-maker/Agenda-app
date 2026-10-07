@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "859163604812",
+    "project_id": "smartagenda-508917",
+    "storage_bucket": ""
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859163604812:android:smartagenda",
+        "android_client_info": {
+          "package_name": "com.smartagenda.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859163604812-oqd7ubj705ovfffqf2qngh3o12n0vequ.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartagenda.app",
+            "certificate_hash": "4bee9cced201491efd7fdb0e0557555cbbd511b17"
+          }
+        },
+        {
+          "client_id": "859163604812-bak9ks93bf3v4kkpvg36sn8ok7bs0k7s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrYla26w1HYCOFuyeAUPJA9Q6VBJUAsHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859163604812-bak9ks93bf3v4kkpvg36sn8ok7bs0k7s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

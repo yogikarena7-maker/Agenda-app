@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>October Agenda - Daily View</title>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration for Custom Neon Palette -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#0e1013',
+            brandDarkSurface: '#16181d',
+            brandDarkElevated: '#1f2229',
+            brandPillDark: '#282b34',
+            brandLimeAccent: '#d2f954',
+            brandLimeVibrant: '#e8ff3b',
+            brandMintCard: '#ccf88b',
+            brandBorderDim: '#252932',
+            brandTextMuted: '#676d7d'
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Lucide Icons (Vanilla Feather/SVG style equivalent) -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Custom Scrollbar and Safe Area Styles -->
+<style data-purpose="custom-layout">
+    body {
+      background-color: #050608;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    /* Hide scrollbars for clean native app look */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4 text-white font-sans antialiased selection:bg-brandLimeAccent selection:text-black">
+<!-- BEGIN: PhoneFrameContainer -->
+<!-- Mimics mobile viewport structure -->
+<main class="w-full max-w-[390px] h-[844px] max-h-screen bg-brandDark rounded-none sm:rounded-[44px] overflow-hidden flex flex-col relative shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] border-0 sm:border-[5px] sm:border-[#22252c]">
+<!-- BEGIN: iOSStatusBar -->
+<!-- Top device system status bar -->
+<header class="w-full pt-3 px-7 pb-2 flex justify-between items-center text-xs tracking-tight font-medium text-white/90 z-20 shrink-0" data-purpose="status-bar">
+<span class="text-sm font-semibold tracking-normal">15:00</span>
+<div class="flex items-center space-x-2">
+<i class="w-3.5 h-3.5 fill-current stroke-none" data-lucide="signal"></i>
+<i class="w-3.5 h-3.5" data-lucide="wifi"></i>
+<div class="w-5 h-2.5 border border-white/80 rounded-sm p-0.5 flex items-center">
+<div class="h-full w-full bg-white rounded-2xs"></div>
+</div>
+</div>
+</header>
+<!-- END: iOSStatusBar -->
+<!-- BEGIN: AppHeader -->
+<!-- Month Navigation, Action Buttons and Avatar -->
+<section class="px-5 pt-1 pb-3 flex justify-between items-center shrink-0" data-purpose="app-header">
+<h1 class="text-2xl font-bold tracking-tight text-white">October</h1>
+<div class="flex items-center space-x-2.5">
+<!-- Search Button -->
+<button aria-label="Search" class="w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-colors">
+<i class="w-4 h-4 stroke-[2.2]" data-lucide="search"></i>
+</button>
+<!-- Calendar Action Button -->
+<button aria-label="Add or switch view" class="w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-colors">
+<i class="w-4 h-4 stroke-[2.2]" data-lucide="calendar"></i>
+</button>
+<!-- User Profile Avatar Pill -->
+<div class="pl-1 pr-1 py-1 bg-[#1a2022] rounded-full border border-brandLimeAccent/40 flex items-center justify-center cursor-pointer" data-purpose="user-avatar-pill">
+<div class="w-6 h-6 rounded-full overflow-hidden bg-brandLimeAccent/20 flex items-center justify-center">
+<!-- Simplified user vector illustration representation -->
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrorms_c-wUr7x7_OMhqP3gk7RvKdUPLl1RnN9xncdCkSxrLgpvT6pyShhdjzYgEZPLWH8nv4u-JXhUqr_a5UQG79oZJIJj48TmYKgLfPeJIyrwfUtzgFjYWmYalx_E4r3EcuWG2mycZlsdMibuNhQHTz8mW1-P94hc79Vzv0kt5yqu3oOeeMFll8aQV--UfRPdJWvbMOx0TyChY1FqyEm8cW0yqUDdBz6buxCNhCSzLEt95lzApJ8fQ"/>
+</div>
+</div>
+</div>
+</section>
+<!-- END: AppHeader -->
+<!-- BEGIN: HorizontalDatePicker -->
+<!-- Weekly horizontal day selector pills -->
+<section class="px-4 pb-3 shrink-0" data-purpose="date-picker-bar">
+<div class="bg-brandDarkSurface p-1.5 rounded-2xl flex items-center justify-between border border-white/[0.04]">
+<!-- Active Selected Day: Monday 3 -->
+<button class="flex flex-col items-center justify-center w-10 py-1.5 rounded-xl bg-brandLimeAccent text-black shadow-sm font-semibold">
+<span class="text-[11px] uppercase font-bold opacity-80 leading-none">M</span>
+<span class="text-base font-extrabold mt-0.5 leading-none">3</span>
+</button>
+<!-- Inactive Day: Tuesday 4 -->
+<button class="flex flex-col items-center justify-center w-10 py-1.5 rounded-xl text-white/90 hover:bg-white/5 transition-colors">
+<span class="text-[11px] font-medium text-brandTextMuted leading-none">T</span>
+<span class="text-sm font-medium mt-1 leading-none">4</span>
+</button>
+<!-- Inactive Day: Wednesday 5 -->
+<button class="flex flex-col items-center justify-center w-10 py-1.5 rounded-xl text-white/90 hover:bg-white/5 transition-colors">
+<span class="text-[11px] font-medium text-brandTextMuted leading-none">W</span>
+<span class="text-sm font-medium mt-1 leading-none">5</span>
+</button>
+<!-- Inactive Day: Thursday 6 -->
+<button class="flex flex-col items-center justify-center w-10 py-1.5 rounded-xl text-white/90 hover:bg-white/5 transition-colors">
+<span class="text-[11px] font-medium text-brandTextMuted leading-none">T</span>
+<span class="text-sm font-medium mt-1 leading-none">6</span>
+</button>
+<!-- Inactive Day: Friday 7 -->
+<button class="flex flex-col items-center justify-center w-10 py-1.5 rounded-xl text-white/90 hover:bg-white/5 transition-colors">
+<span class="text-[11px] font-medium text-brandTextMuted leading-none">F</span>
+<span class="text-sm font-medium mt-1 leading-none">7</span>
+</button>
+<!-- Inactive Day: Saturday 8 -->
+<button class="flex flex-col items-center justify-center w-10 py-1.5 rounded-xl text-white/90 hover:bg-white/5 transition-colors">
+<span class="text-[11px] font-medium text-brandTextMuted leading-none">S</span>
+<span class="text-sm font-medium mt-1 leading-none">8</span>
+</button>
+<!-- Inactive Day: Sunday 9 -->
+<button class="flex flex-col items-center justify-center w-10 py-1.5 rounded-xl text-white/90 hover:bg-white/5 transition-colors">
+<span class="text-[11px] font-medium text-brandTextMuted leading-none">S</span>
+<span class="text-sm font-medium mt-1 leading-none">9</span>
+</button>
+</div>
+<!-- Subtitle showing selected date context -->
+<div class="px-1 pt-3.5 pb-1 text-[11px] font-medium text-brandTextMuted flex items-center">
+<span class="text-white/80 font-semibold mr-1">Today</span> Monday, 1 Oct
+      </div>
+</section>
+<!-- END: HorizontalDatePicker -->
+<!-- BEGIN: AgendaTimelineArea -->
+<!-- Scrollable agenda timetable with grid hours and scheduled cards -->
+<section class="flex-1 overflow-y-auto relative no-scrollbar px-3 pb-24" data-purpose="timeline-schedule">
+<!-- Hour Grid Layout (07:00 to 13:00) -->
+<div class="relative w-full min-h-[580px] pt-1">
+<!-- 07:00 Slot -->
+<div class="h-20 border-t border-brandBorderDim/70 relative">
+<span class="absolute -top-2.5 left-1 text-[10px] font-medium text-brandTextMuted">07:00</span>
+</div>
+<!-- 08:00 Slot -->
+<div class="h-20 border-t border-brandBorderDim/70 relative">
+<span class="absolute -top-2.5 left-1 text-[10px] font-medium text-brandTextMuted">08:00</span>
+</div>
+<!-- 09:00 Slot -->
+<div class="h-20 border-t border-brandBorderDim/70 relative">
+<span class="absolute -top-2.5 left-1 text-[10px] font-medium text-brandTextMuted">09:00</span>
+</div>
+<!-- 10:00 Slot -->
+<div class="h-20 border-t border-brandBorderDim/70 relative">
+<span class="absolute -top-2.5 left-1 text-[10px] font-medium text-brandTextMuted">10:00</span>
+</div>
+<!-- 11:00 Slot -->
+<div class="h-20 border-t border-brandBorderDim/70 relative">
+<span class="absolute -top-2.5 left-1 text-[10px] font-medium text-brandTextMuted">11:00</span>
+</div>
+<!-- 12:00 Slot -->
+<div class="h-20 border-t border-brandBorderDim/70 relative">
+<span class="absolute -top-2.5 left-1 text-[10px] font-medium text-brandTextMuted">12:00</span>
+</div>
+<!-- 13:00 Slot -->
+<div class="h-16 border-t border-brandBorderDim/70 relative">
+<span class="absolute -top-2.5 left-1 text-[10px] font-medium text-brandTextMuted">13:00</span>
+</div>
+<!-- EVENT CARD 1: Flight to Portugal (09:00 - 10:30) -->
+<!-- Placed precisely in the timeline at 09:00 position -->
+<div class="absolute top-[162px] left-10 right-2 h-[100px] bg-brandMintCard text-black rounded-2xl p-3 shadow-md flex flex-col justify-between select-none" data-purpose="event-card-flight">
+<div class="flex items-start justify-between">
+<div class="leading-tight">
+<div class="text-[10px] font-semibold text-black/70">09:00</div>
+<div class="text-[9px] font-medium text-black/50">1h 30m</div>
+</div>
+<!-- Event Title & Airplane Icon -->
+<div class="flex items-center space-x-2 flex-1 pl-4">
+<div class="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center shrink-0">
+<i class="w-3.5 h-3.5 text-black stroke-[2.2]" data-lucide="plane"></i>
+</div>
+<span class="font-bold text-xs tracking-tight text-black">Flight to Portugal</span>
+</div>
+</div>
+<!-- Card Bottom spacer -->
+<div class="h-2"></div>
+</div>
+<!-- CURRENT TIME INDICATOR LINE: 11:05 -->
+<!-- Neon Lime illuminated horizontal rule with time pill marker -->
+<div class="absolute top-[328px] left-0 right-0 flex items-center z-10 pointer-events-none" data-purpose="current-time-marker">
+<!-- Time indicator badge -->
+<div class="flex items-center space-x-1 pl-1 pr-1.5 py-0.5 rounded-full bg-brandDark border border-brandLimeAccent/40">
+<span class="text-[9px] font-bold text-brandLimeAccent">11:05</span>
+<div class="w-1.5 h-1.5 rotate-45 bg-brandLimeAccent rounded-[0.5px]"></div>
+</div>
+<!-- Glowing laser line -->
+<div class="flex-1 h-[2px] bg-brandLimeAccent shadow-[0_0_8px_rgba(210,249,84,0.7)] ml-1"></div>
+</div>
+<!-- EVENT CARD 2: Brainstorming session (11:15 - 12:30) -->
+<!-- High-energy neon yellow/lime card with attendees -->
+<div class="absolute top-[345px] left-10 right-2 h-[105px] bg-brandLimeVibrant text-black rounded-2xl p-3 shadow-lg flex flex-col justify-between" data-purpose="event-card-brainstorm">
+<div class="flex items-start">
+<!-- Time Column -->
+<div class="leading-tight shrink-0 mr-3">
+<div class="text-[10px] font-bold text-black/80">11:15</div>
+<div class="text-[9px] font-medium text-black/60">1h 15m</div>
+<i class="w-2.5 h-2.5 text-black/50 mt-1" data-lucide="repeat"></i>
+</div>
+<!-- Content Column -->
+<div class="flex-1">
+<!-- Title Bar -->
+<div class="flex items-center space-x-1.5">
+<div class="w-5 h-5 rounded-full bg-black/10 flex items-center justify-center shrink-0">
+<i class="w-3 h-3 text-black stroke-[2.2]" data-lucide="users"></i>
+</div>
+<span class="font-bold text-xs tracking-tight text-black truncate">Brainstorming session</span>
+</div>
+<!-- Participant Avatars with Verification Checks -->
+<div class="flex items-center mt-2.5 -space-x-1.5">
+<!-- Avatar 1 -->
+<div class="relative">
+<img alt="Participant 1" class="w-5 h-5 rounded-full border border-brandLimeVibrant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_b6WMX4TfUxX2_IITjI3ySoE4zZFTA-4O96g0sPFZDoggle56qgxLV6jbxdF5KIVSARIghmZaJs-dho5zvdG7EtvdcGg3mLXDriQanFaYNGaC-o_YxavhzdzBOxkdwiYePBzgxGL_8vRhBkNP7EPLsJ33kVQeNstpQexYaMnFg7eUU9BqdHF3PkJjYuFFgf2jRpoarr5cBYdMtUUdZiiQH7Vx1RomJ_WuMIa93rkuP8o0wikLksFNeA"/>
+<span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-600 border border-brandLimeVibrant flex items-center justify-center">
+<i class="w-1.5 h-1.5 text-white stroke-[3]" data-lucide="check"></i>
+</span>
+</div>
+<!-- Avatar 2 -->
+<div class="relative">
+<img alt="Participant 2" class="w-5 h-5 rounded-full border border-brandLimeVibrant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXh1YeaObbim07dHzFkfxuPCI-YOLt_idytmbreVaULoBS_HsEnKQogN7eU5_KQ7oVS7zX7eaGdM1SV9I5n6-OkBKKEWmoTDIixwREZg9XjCYbDJsbSquLegdq3eDZZ464VX6e-UKIxGpZNfVZmP00Sz8kdeL7AWLHNp_YDKbo1YoSXF24DXyOMb6V40OoiGmFdI6MN7eIZgjUtCdRtTI54NeaQC1ADzFCKRZg0FDaFoIFUYnqp6TPjA"/>
+<span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-600 border border-brandLimeVibrant flex items-center justify-center">
+<i class="w-1.5 h-1.5 text-white stroke-[3]" data-lucide="check"></i>
+</span>
+</div>
+<!-- Avatar 3 -->
+<div class="relative">
+<img alt="Participant 3" class="w-5 h-5 rounded-full border border-brandLimeVibrant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeWQk0vu1NVEPGEQNNYPj3uJCkHG7m4cxnuKQ4euy2jBeshGvVjzyY6RlSr9v3tWx9ZMJk9X56VfV0FDEc1S8LBK-86d_JkAKHlD5s4tL2i8tTs_jK3inUx0Q0vOUHWTEvrzjxxdCc00OsTgp-UpYnUoOWIGd0vhHiPOsPLmoeK5N9FTnzoWJ2k0IOAbAav-w5xr6bsGkmppNjfK1rNFc-CkVfPjFyFkJaznuyYuA3c-xCiDJAvca24A"/>
+<span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-600 border border-brandLimeVibrant flex items-center justify-center">
+<i class="w-1.5 h-1.5 text-white stroke-[3]" data-lucide="check"></i>
+</span>
+</div>
+<!-- Avatar 4 -->
+<div class="relative">
+<img alt="Participant 4" class="w-5 h-5 rounded-full border border-brandLimeVibrant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH9viTLshJFISRYPu5_SVPCXZlc-gRXjEDCJTqFOXlb7xZ83AnYU6IXYiOa4K9giO5Qx1PdC-UXkByq--idmVJPAZEbkeRskxc_4U_ML_mFBLIa1APR2hMsE9aADbjNicX2KrEj6bu5HgdWBsYUYwzgugaRdYi9taGCq4VJ3CpT9uVg0W29Q-VsvhBip5tyzobTW-OD7RmVHKnHo6vCrmPW-yKpzUR9AXnoEIwctnMa_Qotg9x2nZ_sQ"/>
+<span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-600 border border-brandLimeVibrant flex items-center justify-center">
+<i class="w-1.5 h-1.5 text-white stroke-[3]" data-lucide="check"></i>
+</span>
+</div>
+</div>
+<!-- Meeting Service Tag -->
+<div class="flex items-center space-x-1 mt-1 text-[9px] font-semibold text-black/65">
+<i class="w-2.5 h-2.5" data-lucide="video"></i>
+<span>Skype call</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: AgendaTimelineArea -->
+<!-- BEGIN: FloatingCapsuleNavBar -->
+<!-- Bottom floating 3-view navigation capsule -->
+<nav class="absolute bottom-6 left-0 right-0 flex justify-center z-30 pointer-events-none" data-purpose="bottom-view-selector">
+<div class="pointer-events-auto bg-[#1a1d24]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center space-x-3 shadow-2xl">
+<!-- View 1: Timeline List (Active state) -->
+<button aria-label="Timeline View" class="w-9 h-7 rounded-full bg-white/15 text-white flex items-center justify-center transition-colors">
+<i class="w-4 h-4 stroke-[2.5]" data-lucide="equal"></i>
+</button>
+<!-- View 2: Month Grid View -->
+<button aria-label="Month View" class="w-9 h-7 rounded-full text-white/50 hover:text-white flex items-center justify-center transition-colors">
+<i class="w-3.5 h-3.5" data-lucide="layout-grid"></i>
+</button>
+<!-- View 3: Calendar Agenda List -->
+<button aria-label="Calendar List" class="w-9 h-7 rounded-full text-white/50 hover:text-white flex items-center justify-center transition-colors">
+<i class="w-3.5 h-3.5" data-lucide="calendar-days"></i>
+</button>
+</div>
+</nav>
+<!-- END: FloatingCapsuleNavBar -->
+<!-- BEGIN: HomeIndicator -->
+<!-- Standard iOS gesture bar at screen bottom -->
+<footer class="w-full pb-2 pt-1 flex justify-center shrink-0" data-purpose="home-indicator">
+<div class="w-32 h-1 bg-white/30 rounded-full"></div>
+</footer>
+<!-- END: HomeIndicator -->
+</main>
+<!-- END: PhoneFrameContainer -->
+<!-- Icon initializer script -->
+<script data-purpose="icon-initialization">
+    document.addEventListener('DOMContentLoaded', function () {
+      lucide.createIcons();
+    });
+  </script>
+</body></html>

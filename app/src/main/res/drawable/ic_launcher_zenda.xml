@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Background Dark Blue Glass Container -->
+    <path
+        android:fillColor="#0D1527"
+        android:pathData="M 12,20 C 12,12 12,12 20,12 L 80,12 C 88,12 88,12 88,20 L 88,80 C 88,88 88,88 80,88 L 20,88 C 12,88 12,88 12,80 Z" />
+
+    <!-- Subtle Cyan/Blue Glow Border -->
+    <path
+        android:strokeColor="#254375"
+        android:strokeWidth="1.5"
+        android:pathData="M 12,20 C 12,12 12,12 20,12 L 80,12 C 88,12 88,12 88,20 L 88,80 C 88,88 88,88 80,88 L 20,88 C 12,88 12,88 12,80 Z" />
+
+    <!-- Arch Canopy (Top Umbrella Element) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 22,46 C 22,30.5 34.5,18 50,18 C 65.5,18 78,30.5 78,46 L 65,46 C 65,37.7 58.3,31 50,31 C 41.7,31 35,37.7 35,46 Z" />
+
+    <!-- Center Connecting Stem -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 46.5,43 L 53.5,43 L 53.5,56 L 46.5,56 Z" />
+
+    <!-- Stylized Zenda Z Emblem -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 36,54 L 64,54 L 64,62 L 49.5,62 L 60,72 L 64,72 L 64,80 L 36,80 L 36,72 L 50.5,72 L 40,62 L 36,62 Z" />
+
+</vector>

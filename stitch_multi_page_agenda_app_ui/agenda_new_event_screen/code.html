@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>New Event - Mobile Agenda</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            appDark: '#0D0E11',
+            appCard: '#181A20',
+            appCardBorder: '#232730',
+            appTextMuted: '#8E94A0',
+            neonLime: '#C8F135',
+            neonLimeDark: '#A6D025'
+          },
+          fontFamily: {
+            sans: [
+              '-apple-system',
+              'BlinkMacSystemFont',
+              '"SF Pro Display"',
+              '"SF Pro Text"',
+              'system-ui',
+              'sans-serif'
+            ]
+          }
+        }
+      }
+    };
+  </script>
+<!-- Custom Utility Styles -->
+<style data-purpose="custom-styling">
+    /* Hide native scrollbar for seamless native feel */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[#050607] text-white font-sans flex items-center justify-center min-h-screen p-0 sm:p-4 selection:bg-neonLime selection:text-black antialiased">
+<!-- BEGIN: MobileDeviceWrapper -->
+<!-- Simulates standard iOS viewport frame -->
+<div class="w-full max-w-[390px] h-[844px] max-h-screen bg-appDark rounded-[48px] shadow-2xl border-[6px] border-[#1f232b] relative flex flex-col overflow-hidden" data-purpose="ios-frame">
+<!-- BEGIN: iOSStatusBar -->
+<header class="w-full px-7 pt-3.5 pb-1 flex justify-between items-center z-30 select-none" data-purpose="ios-status-bar">
+<!-- Time Display -->
+<span class="text-sm font-semibold tracking-tight text-white pl-1">15:00</span>
+<!-- Dynamic Island / Speaker Notch Simulation Spacer -->
+<div class="w-24 h-4 bg-transparent rounded-full"></div>
+<!-- Right Status Icons: Cell Signal, WiFi, Battery -->
+<div class="flex items-center space-x-1.5 text-white">
+<!-- Cellular Signal Icon -->
+<svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
+<path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.2.2-.2.51 0 .71.1.1.23.15.35.15.13 0 .26-.05.35-.15l1.64-1.64C8.24 19.47 10.04 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 2c3.87 0 7 3.13 7 7s-3.13 7-7 7c-1.62 0-3.12-.55-4.32-1.48l1.45-1.45C10.02 16.68 10.98 17 12 17c2.76 0 5-2.24 5-5s-2.24-5-5-5c-.94 0-1.82.26-2.58.72l-1.48-1.48C9.17 5.46 10.53 5 12 5z"></path>
+</svg>
+<!-- Wifi Icon -->
+<svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.32c3.74 0 7.15 1.44 9.71 3.82L12 19.82 2.29 11.14C4.85 8.76 8.26 7.32 12 7.32z"></path>
+</svg>
+<!-- Battery Icon -->
+<div class="w-5 h-2.5 border border-white rounded-[4px] p-0.5 flex items-center">
+<div class="h-full w-full bg-white rounded-[1.5px]"></div>
+</div>
+</div>
+</header>
+<!-- END: iOSStatusBar -->
+<!-- BEGIN: SheetHeader -->
+<!-- Top Modal Handle and Nav Action Bar -->
+<div class="w-full pt-1 pb-3 px-5 flex flex-col items-center" data-purpose="sheet-navigation">
+<!-- Drag Handle Indicator -->
+<div class="w-9 h-1 bg-[#373A43] rounded-full mb-3"></div>
+<!-- Header Action Row: Close, Title, Confirm -->
+<div class="w-full flex items-center justify-between">
+<!-- Close (X) Button -->
+<button aria-label="Close" class="w-8 h-8 flex items-center justify-center text-appTextMuted hover:text-white transition-colors" type="button">
+<svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Center Sheet Title -->
+<h1 class="text-base font-semibold text-white tracking-tight">New event</h1>
+<!-- Save/Confirm Checkmark Button -->
+<button aria-label="Save event" class="w-8 h-8 flex items-center justify-center text-white hover:text-neonLime transition-colors" type="button">
+<svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- END: SheetHeader -->
+<!-- BEGIN: ModalFormContent -->
+<!-- Scrollable interactive event form container -->
+<main class="flex-1 overflow-y-auto px-4 pb-8 space-y-3.5" data-purpose="event-form-scrollable-area">
+<!-- SECTION 1: Event Name Field -->
+<div class="w-full bg-appCard border border-appCardBorder rounded-2xl p-3.5 flex items-center justify-between cursor-pointer hover:border-zinc-700 transition" data-purpose="title-input-row">
+<div class="flex items-center space-x-3 overflow-hidden">
+<!-- Neon Lime Status Indicator Pill -->
+<div class="w-1.5 h-6 bg-neonLime rounded-full flex-shrink-0"></div>
+<!-- Title Label / Value -->
+<span class="text-[15px] font-medium text-white truncate">Demo session/Booking flow</span>
+</div>
+<!-- Right Arrow Chevron -->
+<svg class="w-4 h-4 text-appTextMuted flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- SECTION 2: Add People -->
+<div class="w-full bg-appCard border border-appCardBorder rounded-2xl p-3.5 flex items-center justify-between cursor-pointer hover:border-zinc-700 transition" data-purpose="add-people-row">
+<div class="flex items-center space-x-3.5">
+<!-- User Icon -->
+<svg class="w-5 h-5 text-appTextMuted" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+</svg>
+<span class="text-[15px] font-medium text-white">Add people</span>
+</div>
+<!-- Right Arrow Chevron -->
+<svg class="w-4 h-4 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- SECTION 3: Time & Date Configuration Group -->
+<div class="w-full bg-appCard border border-appCardBorder rounded-2xl overflow-hidden divide-y divide-[#252932]" data-purpose="date-time-card-group">
+<!-- All Day Toggle Row -->
+<div class="p-3.5 flex items-center justify-between">
+<div class="flex items-center space-x-3.5">
+<!-- Clock Icon -->
+<svg class="w-5 h-5 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="9"></circle>
+<polyline points="12 7 12 12 15 15"></polyline>
+</svg>
+<span class="text-[15px] font-medium text-white">All day</span>
+</div>
+<!-- iOS Toggle Switch (Disabled / Inactive state) -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-[#323640] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neonLime"></div>
+</label>
+</div>
+<!-- Date & Time Split Selector Cards -->
+<div class="grid grid-cols-2 divide-x divide-[#252932] p-3.5 gap-x-3">
+<!-- Left Column: Date -->
+<div class="pr-2 flex flex-col justify-center cursor-pointer">
+<span class="text-[11px] font-medium text-appTextMuted uppercase tracking-wider">Date</span>
+<div class="text-[14px] font-semibold text-white mt-0.5">Wed, 3 Oct</div>
+<div class="flex items-center space-x-1 mt-1 text-appTextMuted text-[12px]">
+<svg class="w-3.5 h-3.5 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="18" rx="2" ry="2" width="18" x="3" y="4"></rect>
+<line x1="16" x2="16" y1="2" y2="6"></line>
+<line x1="8" x2="8" y1="2" y2="6"></line>
+<line x1="3" x2="21" y1="10" y2="10"></line>
+</svg>
+<span>Today</span>
+</div>
+</div>
+<!-- Right Column: Time Duration -->
+<div class="pl-3.5 flex flex-col justify-center cursor-pointer">
+<span class="text-[11px] font-medium text-appTextMuted uppercase tracking-wider">Time</span>
+<div class="text-[14px] font-semibold text-white mt-0.5">16:00 &gt; 17:00</div>
+<div class="flex items-center space-x-1 mt-1 text-appTextMuted text-[12px]">
+<svg class="w-3.5 h-3.5 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+<span>1 hour</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 4: Location & Connectivity Group -->
+<div class="w-full bg-appCard border border-appCardBorder rounded-2xl divide-y divide-[#252932]" data-purpose="location-details-group">
+<!-- Time zone -->
+<div class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-zinc-800/40 transition">
+<div class="flex items-center space-x-3.5">
+<!-- Globe Icon -->
+<svg class="w-5 h-5 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<line x1="2" x2="22" y1="12" y2="12"></line>
+<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+</svg>
+<span class="text-[15px] font-medium text-white">Time zone</span>
+</div>
+<svg class="w-4 h-4 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Location -->
+<div class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-zinc-800/40 transition">
+<div class="flex items-center space-x-3.5">
+<!-- Pin / Map Marker Icon -->
+<svg class="w-5 h-5 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+<circle cx="12" cy="10" r="3"></circle>
+</svg>
+<span class="text-[15px] font-medium text-white">Location</span>
+</div>
+<svg class="w-4 h-4 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Skype Call Link -->
+<div class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-zinc-800/40 transition">
+<div class="flex items-center space-x-3.5">
+<!-- Skype / Communication Icon -->
+<div class="w-5 h-5 rounded-full border-2 border-appTextMuted flex items-center justify-center font-bold text-[11px] leading-none text-appTextMuted">
+              S
+            </div>
+<span class="text-[15px] font-medium text-white">Skype</span>
+</div>
+<svg class="w-4 h-4 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+<!-- SECTION 5: Additional Settings Group -->
+<div class="w-full bg-appCard border border-appCardBorder rounded-2xl divide-y divide-[#252932]" data-purpose="extra-settings-group">
+<!-- Description -->
+<div class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-zinc-800/40 transition">
+<div class="flex items-center space-x-3.5">
+<!-- Text/Paragraph Lines Icon -->
+<svg class="w-5 h-5 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<line x1="3" x2="21" y1="6" y2="6"></line>
+<line x1="3" x2="21" y1="12" y2="12"></line>
+<line x1="3" x2="15" y1="18" y2="18"></line>
+</svg>
+<span class="text-[15px] font-medium text-white">Description</span>
+</div>
+<svg class="w-4 h-4 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Repeat -->
+<div class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-zinc-800/40 transition">
+<div class="flex items-center space-x-3.5">
+<!-- Repeat / Sync Icon -->
+<svg class="w-5 h-5 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<polyline points="17 1 21 5 17 9"></polyline>
+<path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+<polyline points="7 23 3 19 7 15"></polyline>
+<path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+</svg>
+<span class="text-[15px] font-medium text-white">Repeat <span class="text-appTextMuted font-normal">(None)</span></span>
+</div>
+<svg class="w-4 h-4 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Remind me -->
+<div class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-zinc-800/40 transition">
+<div class="flex items-center space-x-3.5">
+<!-- Notification Bell Icon -->
+<svg class="w-5 h-5 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+<path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+</svg>
+<span class="text-[15px] font-medium text-white">Remind me</span>
+</div>
+<svg class="w-4 h-4 text-appTextMuted" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+</main>
+<!-- END: ModalFormContent -->
+<!-- BEGIN: iOSHomeIndicator -->
+<footer class="w-full pb-2 pt-1 flex justify-center items-center select-none" data-purpose="ios-home-indicator">
+<div class="w-36 h-1 bg-white/70 rounded-full"></div>
+</footer>
+<!-- END: iOSHomeIndicator -->
+</div>
+<!-- END: MobileDeviceWrapper -->
+</body></html>
